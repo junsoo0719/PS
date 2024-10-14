@@ -10,6 +10,8 @@ using pii = pair<int, int>;
 int t;
 int n, m, a, b, x, y, k;
 const int INF = 1001;
+int d[1002];
+int dT[1002];
 int res[1002];
 int city[1002];
 
@@ -47,8 +49,6 @@ int main()
 		cin >> n >> m;
 		vector<pii> adj[1002];
 		vector<pii> adjT[1002];
-		int d[1002];
-		int dT[1002];
 		for (int i = 0; i < m; i++)
 		{
 			cin >> a >> b >> x >> y;
