@@ -14,7 +14,7 @@ int main()
 	while (t--)
 	{
 		int x, y;
-		string s;
+		string s; //O(|s|) space
 		cin >> x >> y;
 		cin >> s;
 		int cnt[10] = {};
@@ -22,7 +22,7 @@ int main()
 		int total_cost = 0;
 		bool rune = false;
 		for (size_t i = 0; i < s.size(); i++)
-		{
+		{ //O(|s|) time
 			if (s[i] == '3' || s[i] == '6' || s[i] == '9')
 			{
 				cnt[s[i] - '0']++;
@@ -49,6 +49,30 @@ int main()
 }
 
 /*
+ 정답률
+A 25/28
+B 10/28
+전체분반
+A 109/146
+B 53/146
+
+optimization problem (greedy algorithm)
+
+수업 해설 코드
+int cnt[3]; //3,6,9 룬 숫자 개수 기록
+int eng=0;
+int 
+for i=0~s.size()-1
+	if s[i]=='3'||'6'||'9'
+		cnt[(int)(s[i]-'0') / 3 - 1]++;
+		eng += min(x*count,x+y);
+		count=0;
+	else
+		count++;
+if count>0
+	eng += min(x*count,x+y);
+print eng, min(cnt[0], min(cnt[1],cnt[2]));
+
 (의사코드)
 사용할 변수
 	- cnt배열: 3,6,9의 개수
