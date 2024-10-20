@@ -1,10 +1,15 @@
 #include <iostream>
-#include <algorithm>
 using namespace std;
 
+using ll = long long;
 int t;
-int clk[11];
-int arr[8] = { 2,3,5,7,11,13,17,19 };
+
+ll GCD(ll a, ll b)
+{
+	if (b == 0)
+		return a;
+	return GCD(b, a % b);
+}
 
 int main()
 {
@@ -17,90 +22,64 @@ int main()
 	{
 		int n;
 		cin >> n;
-		long long ans = 1;
+		ll clk[10] = {};
 		for (int i = 0; i < n; i++)
-		{
 			cin >> clk[i];
-			ans *= clk[i];
-		}
-		int cidx = 0;
-		int aidx = 0;
-		long long cur = 0;
-		while (aidx < 8)
-		{
-			if (ans % arr[aidx] != 0)
-			{
-				aidx++;
-				continue;
-			}
-			cur = ans / arr[aidx];
-			while (cidx < n)
-			{
-				if (cur % clk[cidx] != 0)
-					break;
-				cidx++;
-			}
-			if (cidx == n)
-			{
-				ans = cur;
-				cidx = 0;
-				continue;
-			}
-			aidx++;
-			cidx = 0;
-		}
+		ll ans = clk[0];
+		for (int i = 1; i < n; i++)
+			ans = ans * clk[i] / GCD(ans, clk[i]);
 		cout << ans << "\n";
-
-		/*¼ö¾÷ Ç®ÀÌ
-		int N; //½Ã°è ¼ö
-		int clk[10]; //°¢ ½Ã°è 1¹ÙÄû ½Ã°£ O(N) space
-		for i 0~N-1 //O(N)
-			read clk[i]
-		ans=clk[0]
-		for i 1~N-1 //O(N)
-			gcd=GCD(ans,clk[i]) //O(time(GCD))
-			ans=ans*clk[i]/gcd
-		//ÀüÃ¼ O(N * time(GCD)) = O(N * log(max(clk[i])))
-		*/
 	}
 }
 
+/*ìˆ˜ì—… í’€ì´
+int N; //ì‹œê³„ ìˆ˜
+int clk[10]; //ê° ì‹œê³„ 1ë°”í€´ ì‹œê°„ O(N) space
+for i 0~N-1 //O(N)
+	read clk[i]
+ans=clk[0]
+for i 1~N-1 //O(N)
+	cd=GCD(ans,clk[i]) //O(time(GCD))
+	ans=ans*clk[i]/gcd
+//ì „ì²´ O(N * time(GCD)) = O(N * log(max(clk[i])))
+*/
+
 /*
 <Basic Idea>
-ÃÖ¼Ò°ø¹è¼ö(Least Common Multiple)
-µÎ ¾çÀÇ Á¤¼ö a,b
-ÃÖ´ë°ø¾à¼ö(Greatest Common Divisor)
+ìµœì†Œê³µë°°ìˆ˜(Least Common Multiple)
+ë‘ ì–‘ì˜ ì •ìˆ˜ a,b
+ìµœëŒ€ê³µì•½ìˆ˜(Greatest Common Divisor)
 
-12,30ÀÇ ÃÖ´ë°ø¾à¼ö
+12,30ì˜ ìµœëŒ€ê³µì•½ìˆ˜
 12=2*2*3
 30=2*3*5
 gcd(12,30)=2*3=6
-lcm(12,30)=2*2*3*5=60 (Áßº¹µÈ ºÎºÐ Á¦¿Ü(ÇÑ ¹ø¸¸))
+lcm(12,30)=2*2*3*5=60 (ì¤‘ë³µëœ ë¶€ë¶„ ì œì™¸(í•œ ë²ˆë§Œ))
 
-À¯Å¬¸®µå È£Á¦¹ý
-µÎ ¾çÀÇ Á¤¼ö a,b(a>b) a=bq+r(0<=r<b) (Áï r=a mod b)
-a,bÀÇ ÃÖ´ë °ø¾à¼ö= b,rÀÇ ÃÖ´ë°ø¾à¼ö
+ìœ í´ë¦¬ë“œ í˜¸ì œë²•
+ë‘ ì–‘ì˜ ì •ìˆ˜ a,b(a>b) a=bq+r(0<=r<b) (ì¦‰ r=a mod b)
+a,bì˜ ìµœëŒ€ ê³µì•½ìˆ˜= b,rì˜ ìµœëŒ€ê³µì•½ìˆ˜
 
-ÃÖ¼Ò°ø¹è¼ö lcm(a,b)=a*b/gcd(a,b)
+ìµœì†Œê³µë°°ìˆ˜ lcm(a,b)=a*b/gcd(a,b)
 
-3°³ ÀÌ»óÀÇ ¼ö¿¡ ´ëÇØ ¹Ýº¹ÀûÀ¸·Î °è»ê
-1,2,3ÀÏ ¶§
+3ê°œ ì´ìƒì˜ ìˆ˜ì— ëŒ€í•´ ë°˜ë³µì ìœ¼ë¡œ ê³„ì‚°
+1,2,3ì¼ ë•Œ
 1) gcd(1,2)=1
-	lcm(1,2)=1*2/gcd(1,2)=2 ÀÌ °ªÀÌ ¾Æ·¡ gcdÀÇ Ã¹ inputÀ¸·Î µé¾î°¨
+	lcm(1,2)=1*2/gcd(1,2)=2 ì´ ê°’ì´ ì•„ëž˜ gcdì˜ ì²« inputìœ¼ë¡œ ë“¤ì–´ê°
 2) gcd(2,3)=1
 	lcm(2,3)=2*3/gcd(2,3)=6
 */
 
 /*
-À¯Å¬¸®µå È£Á¦¹ý
-Àç±ÍÇÔ¼ö
-gcd(a, b) //ÃÖ´ë°ø¾à¼ö
+ìœ í´ë¦¬ë“œ í˜¸ì œë²•
+ìž¬ê·€í•¨ìˆ˜
+gcd(a, b) //ìµœëŒ€ê³µì•½ìˆ˜
 {
 	r=a mod b;
 	if r == 0 then
 	gcd(b, a % b);
 }
-lcm(a, b) //ÃÖ¼Ò°ø¹è¼ö
+lcm(a, b) //ìµœì†Œê³µë°°ìˆ˜
 {
 	a * b / gcd(a, b);
 }
