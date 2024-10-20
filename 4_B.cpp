@@ -6,9 +6,8 @@ using namespace std;
 #define Y second
 using pii = pair<int, int>;
 
-int t, n;
-int cost[1002];
-int board[1002][1002];
+int t;
+bool chk[1001];
 
 int main()
 {
@@ -19,87 +18,90 @@ int main()
 	cin >> t;
 	while (t--)
 	{
+		int n;
 		cin >> n;
-		priority_queue<pii, vector<pii>, greater<pii>> pq;
+		vector<vector<pii>> adj(n + 1);
+		fill(chk, chk + 1001, false);
 		for (int i = 1; i <= n; i++)
 		{
-			cin >> cost[i];
-			pq.push({ cost[i],i });
+			int w;
+			cin >> w;
+			adj[0].push_back({ w,i });
+			adj[i].push_back({ w,0 });
 		}
 		for (int i = 1; i <= n; i++)
 		{
 			for (int j = 1; j <= n; j++)
 			{
-				cin >> board[i][j];
+				int p;
+				cin >> p;
+				if (j <= i)
+					continue;
+				adj[i].push_back({ p,j });
+				adj[j].push_back({ p,i });
 			}
 		}
-
-		while (!pq.empty())
+		priority_queue<pii, vector<pii>, greater<pii>> pq;
+		chk[0] = true;
+		for (auto nxt : adj[0])
+			pq.push(nxt);
+		int cnt = 0;
+		int ans = 0;
+		while (cnt < n)
 		{
-			pii cur = pq.top();
+			auto cur = pq.top();
 			pq.pop();
-			if (cur.X != cost[cur.Y]) continue;
-			for (int i = 1; i <= n; i++)
+			if (chk[cur.Y] == true)
+				continue;
+			ans += cur.X;
+			chk[cur.Y] = true;
+			cnt++;
+			for (auto nxt : adj[cur.Y])
 			{
-				if (board[i][cur.Y] + cur.X <= cost[i])
-				{
-					cost[i] = board[i][cur.Y] + cur.X;
-					pq.push({ cost[i],i });
-				}
+				if (!chk[nxt.Y])
+					pq.push(nxt);
 			}
 		}
-
-		int total = 0;
-		for (int i = 1; i <= n; i++)
-		{
-			total += cost[i];
-		}
-		cout << total << "\n";
-
-		fill(cost, cost + n, 0);
-		for (int i = 1; i <= n; i++)
-		{
-			fill(board[i], board[i] + n, 0);
-		}
+		cout << ans << "\n";
 	}
 }
 
 /*
 weighted complete graph
-½Ã¼³:³ëµå ¼ÛÀü¼±:¿§Áö
- - ¸ğµç Á¤Á¡ Æ÷ÇÔµÇ¾î¾ßÇÔ => n°³
- - °£¼± ÃÖ¼Ò ¿¬°á => n-1°³
- - »çÀÌÅ¬ ¹ß»ı X
- => spanning tree Æ¯Â¡, °£¼±µéÀÇ °¡ÁßÄ¡ ÇÕÀÌ ÃÖ¼Ò°¡ µÇ¾î¾ß ÇÔ
- => ÃÖ¼Ò½ÅÀåÆ®¸® MST ¹®Á¦
+ì‹œì„¤:ë…¸ë“œ ì†¡ì „ì„ :ì—£ì§€
+ - ëª¨ë“  ì •ì  í¬í•¨ë˜ì–´ì•¼í•¨ => nê°œ
+ - ê°„ì„  ìµœì†Œ ì—°ê²° => n-1ê°œ
+ - ì‚¬ì´í´ ë°œìƒ X
+ => spanning tree íŠ¹ì§•, ê°„ì„ ë“¤ì˜ ê°€ì¤‘ì¹˜ í•©ì´ ìµœì†Œê°€ ë˜ì–´ì•¼ í•¨
+ => ìµœì†Œì‹ ì¥íŠ¸ë¦¬ MST ë¬¸ì œ
 
- ¹ßÀü¼Ò¸¦ ÀÇ¹ÌÇÏ´Â °¡»óÀÇ Á¤Á¡ ÇÏ³ª¸¦ Ãß°¡ÇÏ°í ½Ã¼³À» ³ªÅ¸³»´Â ¸ğµç Á¤Á¡µé°ú
- ÇØ´ç Á¤Á¡ »çÀÌ¿¡ °£¼±À» ±×¸°´Ù.
- °¢ °£¼±ÀÇ °¡ÁßÄ¡´Â ÇØ´ç ½Ã¼³ÀÇ ¿·¿¡ ¹ßÀü¼Ò¸¦ Áş´Â ºñ¿ëÀ¸·Î ¼³Á¤ÇÑ´Ù
+ ë°œì „ì†Œë¥¼ ì˜ë¯¸í•˜ëŠ” ê°€ìƒì˜ ì •ì  í•˜ë‚˜ë¥¼ ì¶”ê°€í•˜ê³  ì‹œì„¤ì„ ë‚˜íƒ€ë‚´ëŠ” ëª¨ë“  ì •ì ë“¤ê³¼
+ í•´ë‹¹ ì •ì  ì‚¬ì´ì— ê°„ì„ ì„ ê·¸ë¦°ë‹¤.
+ ê° ê°„ì„ ì˜ ê°€ì¤‘ì¹˜ëŠ” í•´ë‹¹ ì‹œì„¤ì˜ ì˜†ì— ë°œì „ì†Œë¥¼ ì§“ëŠ” ë¹„ìš©ìœ¼ë¡œ ì„¤ì •í•œë‹¤
 
- <ÇÁ¸² ¾Ë°í¸®Áò>
- : ½ÃÀÛ Á¤Á¡ ±âÁØ °¡Àå ÀÛÀº °£¼±°ú ¿¬°áµÈ Á¤Á¡ ¼±ÅÃÇÏ¸ç ½ÅÀåÆ®¸® È®Àå
- - ÀÓÀÇÀÇ Á¤Á¡ 1°³ ¼±ÅÃÇÏ¿© Æ®¸® ÁıÇÕ¿¡ »ğÀÔ(¹ßÀü¼Ò)
- - Æ®¸® ÁıÇÕÀÇ Á¤Á¡°ú ÀÎÁ¢ÇÑ Á¤Á¡ »çÀÌÀÇ °£¼± Áß °¡Àå °¡ÁßÄ¡°¡ ÀÛÀº °£¼± ¼±ÅÃ
- - ¼±ÅÃµÈ °£¼±°ú Á¤Á¡ Æ®¸® ÁıÇÕ¿¡ »ğÀÔ
- - ¸ğµç Á¤Á¡ÀÌ Æ®¸® ÁıÇÕ¿¡ Æ÷ÇÔµÇ¸é Á¾·á, ÀÌ ¶§ °¡ÁßÄ¡ÀÇ ÇÕ Ãâ·Â
+ <í”„ë¦¼ ì•Œê³ ë¦¬ì¦˜>
+ : ì‹œì‘ ì •ì  ê¸°ì¤€ ê°€ì¥ ì‘ì€ ê°„ì„ ê³¼ ì—°ê²°ëœ ì •ì  ì„ íƒí•˜ë©° ì‹ ì¥íŠ¸ë¦¬ í™•ì¥
+ - ì„ì˜ì˜ ì •ì  1ê°œ ì„ íƒí•˜ì—¬ íŠ¸ë¦¬ ì§‘í•©ì— ì‚½ì…(ë°œì „ì†Œ)
+ - íŠ¸ë¦¬ ì§‘í•©ì˜ ì •ì ê³¼ ì¸ì ‘í•œ ì •ì  ì‚¬ì´ì˜ ê°„ì„  ì¤‘ ê°€ì¥ ê°€ì¤‘ì¹˜ê°€ ì‘ì€ ê°„ì„  ì„ íƒ
+ - ì„ íƒëœ ê°„ì„ ê³¼ ì •ì  íŠ¸ë¦¬ ì§‘í•©ì— ì‚½ì…
+ - ëª¨ë“  ì •ì ì´ íŠ¸ë¦¬ ì§‘í•©ì— í¬í•¨ë˜ë©´ ì¢…ë£Œ, ì´ ë•Œ ê°€ì¤‘ì¹˜ì˜ í•© ì¶œë ¥
 
 Prim(G,V)
  int ans=0;
- vector<bool> visit[0...V-1] //Æ®¸®Á¤Á¡ÀÎÁö ¿©ºÎ¸¦ ³ªÅ¸³»´Â ¹è¿­ O(V) time, O(N) space
- priority_queue<pair<int,int>, vector<pii>, greater<pii>> pq; //ÃÖ¼Ò¿ì¼±¼øÀ§Å¥
- //ÃÖ´ë O(N^2) space
- pq.push({0,0}); //index 0À» ¹ßÀü¼Ò·Î »ç¿ë
- while !pq.empty() //ÃÖ´ë O(V^2)¹ø ¼öÇà
+ vector<bool> visit[0...V-1] //íŠ¸ë¦¬ì •ì ì¸ì§€ ì—¬ë¶€ë¥¼ ë‚˜íƒ€ë‚´ëŠ” ë°°ì—´ O(V) time, O(N) space
+ priority_queue<pair<int,int>, vector<pii>, greater<pii>> pq; //ìµœì†Œìš°ì„ ìˆœìœ„í
+ //ìµœëŒ€ O(N^2) space
+ pq.push({0,0}); //index 0ì„ ë°œì „ì†Œë¡œ ì‚¬ìš©
+ while !pq.empty() //ìµœëŒ€ O(V^2)ë²ˆ ìˆ˜í–‰
 	(now_weight, now_index) = pq.top();
 	pq.pop(); //T(RemoveMin) = O(log V^2) = O(log V)
 	if visit[now_index] == true
 		continue;
 	ans=ans+now_weight;
 	visit[now_index]=true;
-	for next_index=0 to V-1 //O(n)¹ø ¹İº¹
+	for next_index=0 to V-1 //O(n)ë²ˆ ë°˜ë³µ
 		if visit[next_index] != true
-			pq.push({G[now_index][next_index], next_index}); //pq¿¡ ³ÖÀ½
+			pq.push({G[now_index][next_index], next_index}); //pqì— ë„£ìŒ
 			// T(insert) = log(V^2) = O(log V)
  return ans; //O(V + V^2T(RemoveMin) + V^2T(insert)) = O(V^2log V) time
  //O(N^2) space
@@ -107,9 +109,9 @@ Prim(G,V)
 Main
  vector<vector<int>> graph[N][N] //O(N^2) space
  for i=1 to N
-	graph[0][i]=graph[i][0]=cost //¹ßÀü¼Ò¸¦ °Ç¼³ÇÏ´Â ºñ¿ë
+	graph[0][i]=graph[i][0]=cost //ë°œì „ì†Œë¥¼ ê±´ì„¤í•˜ëŠ” ë¹„ìš©
  for i=1 to N
 	for j=1 to N
-		read graph[i][j] //¼ÛÀü¼±À» ¸Å¼³ÇÏ´Â ºñ¿ë ÀÔ·Â
+		read graph[i][j] //ì†¡ì „ì„ ì„ ë§¤ì„¤í•˜ëŠ” ë¹„ìš© ì…ë ¥
  print Prim(graph, N+1)
 */
