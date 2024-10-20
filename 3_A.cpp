@@ -7,13 +7,13 @@ int t;
 string s;
 string res;
 
-char check(string str)
-{ //ÃÖ¾ÇÀÇ °æ¿ì ¹®ÀÚ¿­ÀÇ ±æÀÌ¸¸Å­ Ã¼Å© ÇÊ¿ä O(str.size())
+bool check(string str)
+{ //ìµœì•…ì˜ ê²½ìš° ë¬¸ìì—´ì˜ ê¸¸ì´ë§Œí¼ ì²´í¬ í•„ìš” O(str.size())
 	for (size_t i = 1; i < str.size(); i++)
-	{ //ÁÖ¾îÁø ¹®ÀÚ¿­ÀÌ ÇÑ¹ø¿¡ ¾ĞÃàµÇÁö ¾Ê´Â °æ¿ì false ¸®ÅÏ
+	{ //ì£¼ì–´ì§„ ë¬¸ìì—´ì´ í•œë²ˆì— ì••ì¶•ë˜ì§€ ì•ŠëŠ” ê²½ìš° false ë¦¬í„´
 		if (str[i] != str[i - 1])
 			return false;
-	} //ÁÖ¾îÁø ¹®ÀÚ¿­ÀÌ ¸ğµÎ 0 ¶Ç´Â 1ÀÏ °æ¿ì true ¸®ÅÏ
+	} //ì£¼ì–´ì§„ ë¬¸ìì—´ì´ ëª¨ë‘ 0 ë˜ëŠ” 1ì¼ ê²½ìš° true ë¦¬í„´
 	return true;
 }
 
@@ -22,12 +22,12 @@ void compress(string str) //T(str.size())
 	if (check(str)) //O(str.size())
 	{
 		res += str[0];
-		return; //ÇÑ¹ø¿¡ ¾ĞÃà °¡´ÉÇÑ ¹®ÀÚ¿­ÀÎ °æ¿ì str[0]À¸·Î ¾ĞÃà ÈÄ ¸®ÅÏ
+		return; //í•œë²ˆì— ì••ì¶• ê°€ëŠ¥í•œ ë¬¸ìì—´ì¸ ê²½ìš° str[0]ìœ¼ë¡œ ì••ì¶• í›„ ë¦¬í„´
 	}
 	size_t size = str.size();
-	res += "B"; //ÇÑ¹ø¿¡ ¾ĞÃà ºÒ°¡´ÉÇÑ °æ¿ì B¸¦ Ãß°¡ÇÏ°í ¹İ¾¿ ³ª´²¼­ Àç±Í
-	compress(str.substr(0, size / 2)); //substr(½ÃÀÛÀ§Ä¡, ±æÀÌ): ºÎºĞ¹®ÀÚ¿­ ÃßÃâ
-	compress(str.substr(size / 2)); //½ÃÀÛÀ§Ä¡ ~ ³¡±îÁö
+	res += "B"; //í•œë²ˆì— ì••ì¶• ë¶ˆê°€ëŠ¥í•œ ê²½ìš° Bë¥¼ ì¶”ê°€í•˜ê³  ë°˜ì”© ë‚˜ëˆ ì„œ ì¬ê·€
+	compress(str.substr(0, size / 2)); //substr(ì‹œì‘ìœ„ì¹˜, ê¸¸ì´): ë¶€ë¶„ë¬¸ìì—´ ì¶”ì¶œ
+	compress(str.substr(size / 2)); //ì‹œì‘ìœ„ì¹˜ ~ ëê¹Œì§€
 } //2T(str.size()/2)
 
 int main()
@@ -40,28 +40,28 @@ int main()
 	while (t--)
 	{
 		cin >> s;
-		compress(s); //T(N) = O(NlgN) ½Ã°£º¹Àâµµ
+		compress(s); //T(N) = O(NlgN) ì‹œê°„ë³µì¡ë„
 		cout << res << "\n";
-		res = ""; //°á°ú ¹®ÀÚ¿­ ÃÊ±âÈ­
+		res = ""; //ê²°ê³¼ ë¬¸ìì—´ ì´ˆê¸°í™”
 	}
 }
 
 /*
-¹®Á¦ ÀÔ·Â Á¶°Ç 2ÀÇÁ¦°ö¼ö -> È¦¼ö·Î ÁÖ¾îÁö´Â °æ¿ì X, ¹İÀ¸·Î ÂÉ°³±â ½¬¿ò
-°ø°£º¹Àâµµ O(N)
-recursion tree°¡ binary tree ÇüÅÂ
-ÇÑ path¿¡ ´ëÇÑ space¸¸ »ç¿ë
+ë¬¸ì œ ì…ë ¥ ì¡°ê±´ 2ì˜ì œê³±ìˆ˜ -> í™€ìˆ˜ë¡œ ì£¼ì–´ì§€ëŠ” ê²½ìš° X, ë°˜ìœ¼ë¡œ ìª¼ê°œê¸° ì‰¬ì›€
+ê³µê°„ë³µì¡ë„ O(N)
+recursion treeê°€ binary tree í˜•íƒœ
+í•œ pathì— ëŒ€í•œ spaceë§Œ ì‚¬ìš©
 = N + N/2 + N/4 + ... + 1
 = N + N(1/2)/(1-1/2) = 2N => O(N) space
 			N
 	N/2				N/2
 N/4		N/4		 N/4	 N/4
-merge sort¿Í À¯»ç -> postorder traversal
+merge sortì™€ ìœ ì‚¬ -> postorder traversal
 
-Á¤´ä·ü
+ì •ë‹µë¥ 
 A 12/28
 B 3/28
-ÀüÃ¼ºĞ¹İ
+ì „ì²´ë¶„ë°˜
 A 69/146
 B 12/96
 */
