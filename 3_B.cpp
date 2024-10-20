@@ -9,15 +9,13 @@ using pii = pair<int, int>;
 
 int t;
 int n, m, a, b, x, y, k;
-const int INF = 1001;
+const int INF = 1e9;
 int d[1002];
 int dT[1002];
-int res[1002];
-int city[1002];
 
-void dijkstra(const vector<pii> graph[], int dist[])
-{ //const¿¡ reference·Î Àü´ŞÇÏ¸é adj¸Ş¸ğ¸® ±×´ë·Î Àü´Ş
-	fill(dist, dist + n + 1, INF);
+void dijkstra(vector<vector<pii>> &graph, int dist[])
+{ //constì— referenceë¡œ ì „ë‹¬í•˜ë©´ adjë©”ëª¨ë¦¬ ê·¸ëŒ€ë¡œ ì „ë‹¬
+	fill(dist, dist + 1002, INF);
 	priority_queue<pii, vector<pii>, greater<pii>> pq;
 	dist[1] = 0;
 	pq.push({ dist[1],1 });
@@ -47,8 +45,8 @@ int main()
 	while (t--)
 	{
 		cin >> n >> m;
-		vector<pii> adj[1002];
-		vector<pii> adjT[1002];
+		vector<vector<pii>> adj(n + 2); //ë©”ëª¨ë¦¬ í¬ê¸° ë•Œë¬¸ì—
+		vector<vector<pii>> adjT(n + 2); //ë™ì í• ë‹¹ í•´ì¤Œ
 		for (int i = 0; i < m; i++)
 		{
 			cin >> a >> b >> x >> y;
@@ -63,23 +61,24 @@ int main()
 		int ans = 0;
 		for (int i = 0; i < k; i++)
 		{
-			cin >> city[i];
-			res[i] = d[city[i]] + dT[city[i]];
-			ans = max(ans, res[i]);
+			int city;
+			cin >> city;
+			int sum = d[city] + dT[city];
+			ans = max(ans, sum);
 		}
 		cout << ans << "\n";
 	}
 }
 
 /*
-´ÙÀÍ½ºÆ®¶ó k¹ø ¹İº¹ÇÒ ÇÊ¿ä X
-´ÙÀÍ½ºÆ®¶ó ÃÑ 2¹ø¸¸ ÀÌ¿ëÇÏ¸é µÊ
-°á°ú°ª¸¸ k¹ø ºñ±³ÇÏ¸é µÊ
+ë‹¤ìµìŠ¤íŠ¸ë¼ kë²ˆ ë°˜ë³µí•  í•„ìš” X
+ë‹¤ìµìŠ¤íŠ¸ë¼ ì´ 2ë²ˆë§Œ ì´ìš©í•˜ë©´ ë¨
+ê²°ê³¼ê°’ë§Œ kë²ˆ ë¹„êµí•˜ë©´ ë¨
 
-¿§Áö ¹æÇâ ¹Ù²Ş transpose graph¿¡ ´ëÇØ ´ÙÀÍ½ºÆ®¶ó ¼öÇà
-¿ì¼±¼øÀ§ Å¥ heap ÀÌ¿ë -> ´ÙÀÍ½ºÆ®¶ó O(MlgN)
+ì—£ì§€ ë°©í–¥ ë°”ê¿ˆ transpose graphì— ëŒ€í•´ ë‹¤ìµìŠ¤íŠ¸ë¼ ìˆ˜í–‰
+ìš°ì„ ìˆœìœ„ í heap ì´ìš© -> ë‹¤ìµìŠ¤íŠ¸ë¼ O(MlgN)
 lazy evaluation O(MlgM)
-lazy »ç¿ë X O(MlgN) (M=O(N^2))
+lazy ì‚¬ìš© X O(MlgN) (M=O(N^2))
 
-°ø°£º¹Àâµµ O(N+M) -> O(N^2)
+ê³µê°„ë³µì¡ë„ O(N+M) -> O(N^2)
 */
