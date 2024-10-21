@@ -1,45 +1,10 @@
 #include <iostream>
-#include <queue>
-#include <string>
+#include <unordered_map>
 using namespace std;
 
 #define X first
 #define Y second
-using pii = pair<int, int>;
-
-int t, n;
-string idname[11], brname[11];
-int idgoal[11], brgoal[11];
-
-int findidxid(string s)
-{
-	for (int i = 0; i < 10; i++)
-	{
-		if (idname[i] == s)
-			return i;
-		if (idname[i] == "")
-		{
-			idname[i] = s;
-			return i;
-		}
-	}
-	return 0;
-}
-
-int findidxbr(string s)
-{
-	for (int i = 0; i < 10; i++)
-	{
-		if (brname[i] == s)
-			return i;
-		if (brname[i] == "")
-		{
-			brname[i] = s;
-			return i;
-		}
-	}
-	return 0;
-}
+int t;
 
 int main()
 {
@@ -50,76 +15,81 @@ int main()
 	cin >> t;
 	while (t--)
 	{
+		int n;
 		cin >> n;
-		priority_queue<pii, vector<pii>, less<pii>> idpq;
-		priority_queue<pii, vector<pii>, less<pii>> brpq;
-		fill(idname, idname + 11, "");
-		fill(brname, brname + 11, "");
-		fill(idgoal, idgoal + 11, 0);
-		fill(brgoal, brgoal + 11, 0);
-		int idscore = 0;
-		int brscore = 0;
-		
+		unordered_map<string, int> a_score, b_score;
+		int a_before = 0;
+		int b_before = 0;
 		for (int i = 0; i < n; i++)
 		{
 			int a, b;
+			cin >> a >> b;
 			string c;
-			cin >> a >> b >> c;
-			if (idscore != a)
-			{//ÀÎ´öÆÀ µæÁ¡
-				int curidx = findidxid(c);
-				idgoal[curidx] += (a - idscore);
-				//cout << "curidx: " << curidx << "   idscore: " << idscore << "   idgoal[curidx]: " << idgoal[curidx] << "\n";
-				idpq.push({ idgoal[curidx],curidx });
-				idscore = a;
+			cin >> c;
+			if (a != a_before)
+			{ // í•´ë‹¹ keyì˜ value ì¡´ì¬í•˜ì§€ ì•Šìœ¼ë©´ ìë™ ê¸°ë³¸ê°’(0) ì´ˆê¸°í™”
+				a_score[c] += (a - a_before);
+				a_before = a;
 			}
 			else
-			{//ºñ·æÆÀ µæÁ¡
-				int curidx = findidxbr(c);
-				brgoal[curidx] += (b - brscore);
-				//cout << "curidx: " << curidx << "   brscore: " << brscore << "   brgoal[curidx]: " << brgoal[curidx] << "\n";
-				brpq.push({ brgoal[curidx],curidx });
-				brscore = b;
+			{
+				b_score[c] += (b - b_before);
+				b_before = b;
 			}
 		}
-		if (idscore > brscore)
+		string mvp_name;
+		int mvp_score = 0;
+		if (a_before > b_before)
 		{
-			auto mvp = idpq.top();
-			cout << idname[mvp.Y] << " " << mvp.X << "\n";
+			for (auto cur : a_score)
+			{
+				if (cur.Y > mvp_score)
+				{
+					mvp_score = cur.Y;
+					mvp_name = cur.X;
+				}
+			}
 		}
 		else
 		{
-			auto mvp = brpq.top();
-			cout << brname[mvp.Y] << " " << mvp.X << "\n";
+			for (auto cur : b_score)
+			{
+				if (cur.Y > mvp_score)
+				{
+					mvp_score = cur.Y;
+					mvp_name = cur.X;
+				}
+			}
 		}
+		cout << mvp_name << " " << mvp_score << "\n";
 	}
 }
 
 /*
-Á¤´ä·ü
+ì •ë‹µë¥ 
 A 17/28
 B 1/28
-ÀüÃ¼ºĞ¹İ
+ì „ì²´ë¶„ë°˜
 A 93/146
 B 8/146
 
-map ÀÚ·á±¸Á¶ (key, value) = (¼±¼ö, Á¡¼öÀÇ ÇÕ)
-red-black Æ®¸® ÇüÅÂ
-key °ª ±âÁØÀ¸·Î µ¥ÀÌÅÍ Á¤·Ä
-»ğÀÔ º¹Àâµµ O(log n)
+map ìë£Œêµ¬ì¡° (key, value) = (ì„ ìˆ˜, ì ìˆ˜ì˜ í•©)
+red-black íŠ¸ë¦¬ í˜•íƒœ
+key ê°’ ê¸°ì¤€ìœ¼ë¡œ ë°ì´í„° ì •ë ¬
+ì‚½ì… ë³µì¡ë„ O(log n)
 
 unordered map
-ÇØ½Ã Å×ÀÌºí ±â¹İÀ¸·Î O(1) º¹Àâµµ
-µ¥ÀÌÅÍ¸¦ Á¤·ÄÇÒ ÇÊ¿ä ¾øÀ¸¹Ç·Î unordered map »ç¿ë
+í•´ì‹œ í…Œì´ë¸” ê¸°ë°˜ìœ¼ë¡œ O(1) ë³µì¡ë„
+ë°ì´í„°ë¥¼ ì •ë ¬í•  í•„ìš” ì—†ìœ¼ë¯€ë¡œ unordered map ì‚¬ìš©
 
-- ÆÀº°·Î (¼±¼ö, Á¡¼öÇÕ) unordered_map »ı¼º
-- °¢ Á¡¼ö ±â·Ï ÁÖ¾îÁú ¶§¸¶´Ù ÀÌÀü¿¡ ±â·ÏµÈ Á¡¼ö¿Í ºñ±³ÇÏ¿© ¾î´À ÆÀÀÌ µæÁ¡ÇÏ¿´´ÂÁö
-ÆÇ´ÜÇÏ°í, µæÁ¡ÇÑ ¼±¼ö¿¡ ´ëÇØ Á¡¼öÇÕ °»½Å
-- ÃÖÁ¾ ½Â¸®ÇÑ ÆÀÀÇ unordered_map ¼øÈ¸ÇÏ¿© ¼±¼ö Áß Á¡¼öÀÇ ÇÕÀÌ °¡Àå Å« ¼±¼ö ±¸ÇÔ
+- íŒ€ë³„ë¡œ (ì„ ìˆ˜, ì ìˆ˜í•©) unordered_map ìƒì„±
+- ê° ì ìˆ˜ ê¸°ë¡ ì£¼ì–´ì§ˆ ë•Œë§ˆë‹¤ ì´ì „ì— ê¸°ë¡ëœ ì ìˆ˜ì™€ ë¹„êµí•˜ì—¬ ì–´ëŠ íŒ€ì´ ë“ì í•˜ì˜€ëŠ”ì§€
+íŒë‹¨í•˜ê³ , ë“ì í•œ ì„ ìˆ˜ì— ëŒ€í•´ ì ìˆ˜í•© ê°±ì‹ 
+- ìµœì¢… ìŠ¹ë¦¬í•œ íŒ€ì˜ unordered_map ìˆœíšŒí•˜ì—¬ ì„ ìˆ˜ ì¤‘ ì ìˆ˜ì˜ í•©ì´ ê°€ì¥ í° ì„ ìˆ˜ êµ¬í•¨
 
 int before_a=0,before_b=0;
-unordered_map<string,int> score_a, score_b; //O(n+k) space (bucket »çÀÌÁî k)
-for i=1 to n //n¹ø ¹İº¹ÀÌ¹Ç·Î O(n) time
+unordered_map<string,int> score_a, score_b; //O(n+k) space (bucket ì‚¬ì´ì¦ˆ k)
+for i=1 to n //në²ˆ ë°˜ë³µì´ë¯€ë¡œ O(n) time
 	if before_a != a
 		score_a[c] = score_a[c] + (a-before_a) //O(1)
 		before_a=a;
@@ -137,7 +107,7 @@ for i=1 to n //n¹ø ¹İº¹ÀÌ¹Ç·Î O(n) time
 	else
 		
 			
-(Áú¹®)
-map ½Ã°£º¹Àâµµ ºĞ¼® ºÎºĞ¿¡¼­ ÀüÃ¼ ¼±¼ö°¡ nÀÏ ¶§
-mÀÌ¶ó´Â Ãß°¡ º¯¼ö ¾øÀÌ nÀ¸·Î¸¸ ³ªÅ¸³¾ ¼ö´Â ¾øÀ»±î¿ä?
+(ì§ˆë¬¸)
+map ì‹œê°„ë³µì¡ë„ ë¶„ì„ ë¶€ë¶„ì—ì„œ ì „ì²´ ì„ ìˆ˜ê°€ nì¼ ë•Œ
+mì´ë¼ëŠ” ì¶”ê°€ ë³€ìˆ˜ ì—†ì´ nìœ¼ë¡œë§Œ ë‚˜íƒ€ë‚¼ ìˆ˜ëŠ” ì—†ì„ê¹Œìš”?
 */
