@@ -14,7 +14,7 @@ int d[1002];
 int dT[1002];
 
 void dijkstra(vector<vector<pii>> &graph, int dist[])
-{ //const에 reference로 전달하면 adj메모리 그대로 전달
+{
 	fill(dist, dist + 1002, INF);
 	priority_queue<pii, vector<pii>, greater<pii>> pq;
 	dist[1] = 0;
@@ -23,8 +23,8 @@ void dijkstra(vector<vector<pii>> &graph, int dist[])
 	{
 		auto cur = pq.top();
 		pq.pop();
-		if (dist[cur.Y] != cur.X)
-			continue;
+		if (dist[cur.Y] != cur.X)//pq에서 선택한 거리가 가장 작은 원소 거리가
+			continue;//최단거리테이블 값과 다를 경우 넘어가는 조건 중요
 		for (auto nxt : graph[cur.Y])
 		{
 			if (dist[nxt.Y] <= dist[cur.Y] + nxt.X)
