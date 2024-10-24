@@ -1,29 +1,18 @@
 #include <iostream>
 #include <stack>
-#include <string>
 using namespace std;
 
-int t, h, q, c;
-stack<char> st;
+int t;
 
-void binarySearch(int curnode)
+void binarySearch(stack<char>& st, int c)
 {
-	if (curnode == 1)
-	{
-		while (!st.empty())
-		{
-			char cur = st.top();
-			st.pop();
-			cout << cur;
-		}
-		cout << "\n";
+	if (c == 1)
 		return;
-	}
-	if (curnode % 2 == 0)
-		st.push('L');
-	else
+	if (c % 2 == 1)
 		st.push('R');
-	binarySearch(curnode / 2);
+	else
+		st.push('L');
+	binarySearch(st, c / 2);
 }
 
 int main()
@@ -35,36 +24,36 @@ int main()
 	cin >> t;
 	while (t--)
 	{
+		int h, q;
 		cin >> h >> q;
-		while (q--)
+		for (int i = 0; i < q; i++)
 		{
+			int c;
 			cin >> c;
-			//binarySearch(c);
-			string ans = ""; //O(h) space
-			while (c > 1)
-			{ //O(h)
-				string += (c % 2 == 0 ? 'L' : 'R'); //¹®ÀÚ¿­·Î Ãâ·Â
-				c /= 2;
+			stack<char> st;
+			binarySearch(st, c);
+			while (!st.empty())
+			{
+				cout << st.top();
+				st.pop();
 			}
-			reverse(ans.begin(), ans.end()); //¹®ÀÚ¿­À» µÚÁý´Â ÇÔ¼ö O(h)
-			cout << ans << "\n";
-			//È¤Àº ¿ø·¡ ¾Ë´ø ½ºÅÃÀ» »ç¿ëÇØ¼­ Ãâ·ÂÇØµµ µÊ
-		}//ÀüÃ¼ ½Ã°£ º¹Àâµµ: Å×½ºÆ® ÄÉÀÌ½º¸¶´Ù O(qh) time
+			cout << "\n";
+		} //ì „ì²´ ì‹œê°„ ë³µìž¡ë„: í…ŒìŠ¤íŠ¸ ì¼€ì´ìŠ¤ë§ˆë‹¤ O(qh) time
 	}
 }
 
 /*
-Á¤´ä·ü
+ì •ë‹µë¥ 
 A 25/28
 B 3/28
-ÀüÃ¼ºÐ¹Ý
+ì „ì²´ë¶„ë°˜
 A 115/146
 B 26/146
 
-¿ÏÀü ÀÌÁø Æ®¸®
-array·Î Ç¥ÇöÇÒ ¼ö O
+ì™„ì „ ì´ì§„ íŠ¸ë¦¬
+arrayë¡œ í‘œí˜„í•  ìˆ˜ O
 
-·çÆ® ³ëµå: 1¹ø ÀÎµ¦½º
+ë£¨íŠ¸ ë…¸ë“œ: 1ë²ˆ ì¸ë±ìŠ¤
 parent = child / 2
 left = parent * 2 => parent = left / 2
 right = parent * 2 + 1 => parent (right - 1) / 2
