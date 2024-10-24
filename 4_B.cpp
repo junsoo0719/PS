@@ -35,7 +35,7 @@ int main()
 			{
 				int p;
 				cin >> p;
-				if (j <= i)
+				if (j <= i) //중복 입력 받지 않는 이 조건 중요
 					continue;
 				adj[i].push_back({ p,j });
 				adj[j].push_back({ p,i });
