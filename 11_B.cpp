@@ -36,12 +36,17 @@ int main()
 				min_pq.push({ get_time[i],p });
 		}
 
-		int total = 0;
-		while (!pq.empty())
+		long long total = 0;
+		int cnt = 0;
+		while (cnt < n)
 		{
-			auto cur = pq.top();
-			pq.pop();
-			total += (cur_time - cur.Y) * cur.X;
+			if (!pq.empty())
+			{
+				auto cur = pq.top();
+				pq.pop();
+				total += (long long)(cur_time - cur.Y) * cur.X;
+				cnt++;
+			}
 			cur_time++;
 			while (!min_pq.empty() && min_pq.top().X <= cur_time)
 			{
