@@ -7,7 +7,7 @@ using namespace std;
 #define Y second
 using pii = pair<int, int>;
 int t;
-int get_time[1'000'000];
+int harvest_time[1'000'000];
 
 int main()
 {
@@ -20,40 +20,63 @@ int main()
 	{
 		int n, cur_time;
 		cin >> n >> cur_time;
-		priority_queue<pii> pq;
-		priority_queue<pii, vector<pii>, greater<pii>> min_pq;
+		priority_queue<pii> harvest_available;
+		priority_queue<pii, vector<pii>, greater<pii>> nonavailable;
 		for (int i = 0; i < n; i++)
 		{
-			cin >> get_time[i];
+			cin >> harvest_time[i];
 		}
 		for (int i = 0; i < n; i++)
 		{
 			int p;
 			cin >> p;
-			if (get_time[i] <= cur_time)
-				pq.push({ p,get_time[i]});
+			if (harvest_time[i] <= cur_time)
+				harvest_available.push({ p,harvest_time[i]});
 			else
-				min_pq.push({ get_time[i],p });
+				nonavailable.push({ harvest_time[i],p });
 		}
 
-		long long total = 0;
-		int cnt = 0;
-		while (cnt < n)
+		long long total = 0; // long long 타입 중요
+		while (!harvest_available.empty() || !nonavailable.empty())
 		{
-			if (!pq.empty())
+			if (!harvest_available.empty())
 			{
-				auto cur = pq.top();
-				pq.pop();
-				total += (long long)(cur_time - cur.Y) * cur.X;
-				cnt++;
+				auto harvest_crop = harvest_available.top();
+				harvest_available.pop();
+				total += (long long)(cur_time - harvest_crop.Y) * harvest_crop.X;
+				cur_time++;
 			}
-			cur_time++;
-			while (!min_pq.empty() && min_pq.top().X <= cur_time)
+			else
+				cur_time = nonavailable.top().X;
+
+			while (!nonavailable.empty() && nonavailable.top().X <= cur_time)
 			{
-				pq.push({ min_pq.top().Y, min_pq.top().X });
-				min_pq.pop();
+				auto available_crop = nonavailable.top();
+				nonavailable.pop();
+				harvest_available.push({ available_crop.Y, available_crop.X });
 			}
 		}
 		cout << total << "\n";
+
+		/*
+		int cnt = 0;
+		while (cnt < n)
+		{
+			if (!harvest_available.empty())
+			{
+				auto harvest_crop = harvest_available.top();
+				harvest_available.pop();
+				total += (long long)(cur_time - harvest_crop.Y) * harvest_crop.X;
+				cnt++;
+			}  //long long 타입 중요
+			cur_time++;
+			while (!nonavailable.empty() && nonavailable.top().X <= cur_time)
+			{
+				harvest_available.push({ nonavailable.top().Y, nonavailable.top().X });
+				nonavailable.pop();
+			}
+		}
+		cout << total << "\n";
+		*/
 	}
 }
