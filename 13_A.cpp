@@ -1,5 +1,5 @@
 #include <iostream>
-#include <vector>
+#include <algorithm>
 using namespace std;
 
 int t;
@@ -21,7 +21,7 @@ int main()
 			for (int j = 0; j < m; j++)
 			{
 				cin >> A[i][j];
-			}
+			} //초기화 안 해도 덮어써서 괜찮음
 		}
 
 		int q;
@@ -30,33 +30,22 @@ int main()
 		{
 			int query;
 			cin >> query;
-			int row = -1;
+			bool found = false;
 			for (int j = 0; j < n; j++)
 			{
-				if (query <= A[j][m - 1])
+				if (A[j][0] <= query && query <= A[j][m - 1])
 				{
-					row = j;
-					break;
-				}
-			}
-			if (row >= 0)
-			{
-				bool find = false;
-				for (int j = 0; j < m; j++)
-				{
-					if (query == A[row][j])
+					if (binary_search(A[j], A[j] + m, query))
 					{
-						find = true;
+						found = true;
 						break;
 					}
 				}
-				if (find == true)
-				{
-					cout << "1 ";
-					continue;
-				}
 			}
-			cout << "0 ";
+			if(found)
+				cout << "1 ";
+			else
+				cout << "0 ";
 		}
 		cout << "\n";
 	}
