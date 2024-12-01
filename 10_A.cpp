@@ -30,21 +30,10 @@ int main()
 		{
 			int max_sticker = pq.top();
 			pq.pop();
-			inha++;
+			inha--;
 			cnt++;
-			pq.push(max_sticker - 1);
-		}
-		cout << cnt << "\n";
-
-		/*int max_sticker = 0;
-		while (!pq.empty() && inha <= pq.top())
-		{
-			max_sticker = pq.top();
-			pq.pop();
-			pq.push(max_sticker - 1);
-			inha++;
-			move_cnt++;
-		}*/
+			pq.push(max_sticker - 1); //O(log N) time
+		} //O(k log N) time
 	} // 전체 O((N + K)log N) time
 }
 
