@@ -24,21 +24,17 @@ int main()
 			if (sticker >= inha) // 추가
 				pq.push(sticker); // O(N log N) time
 		}
-		int max_sticker;
-		if (!pq.empty())
-			max_sticker = pq.top();
-		else
-			max_sticker = 0;
-		int move_cnt = 0;
-		while (inha <= max_sticker)
+		
+		int cnt = 0;
+		while (!pq.empty() && inha <= pq.top())
 		{
+			int max_sticker = pq.top();
 			pq.pop();
 			inha++;
-			move_cnt++;
-			pq.push(--max_sticker); // O(log N) time
-			max_sticker = pq.top();
-		} // O(k log N) time
-		cout << move_cnt << "\n";
+			cnt++;
+			pq.push(max_sticker - 1);
+		}
+		cout << cnt << "\n";
 
 		/*int max_sticker = 0;
 		while (!pq.empty() && inha <= pq.top())
