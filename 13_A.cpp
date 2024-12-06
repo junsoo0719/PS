@@ -1,5 +1,6 @@
 #include <iostream>
 #include <algorithm>
+#include <vector>
 using namespace std;
 
 int t;
@@ -48,5 +49,33 @@ int main()
 				cout << "0 ";
 		}
 		cout << "\n";
-	}
+
+		/* 1차원 배열로도 가능
+		vector<int> A_flat(n * m); //O(NM) space
+		for (int i = 0; i < n * m; i++)
+		{
+			cin >> A_flat[i];
+		}
+
+		for (int i = 0; i < q; i++)
+		{
+			int query;
+			cin >> query;
+			if (binary_search(A_flat.begin(), A_flat.end(), query))
+				cout << "1 ";
+			else
+				cout << "0 ";
+		}
+		cout << "\n";
+		*/
+	} //O(Q log NM) time
 }
+
+/*
+ 정답률
+A 21/28
+B 3/28
+전체분반
+A 97/135
+B 17/135
+*/
