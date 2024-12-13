@@ -80,3 +80,7 @@ int main()
 		*/
 	}
 }
+
+/*
+pq에 최대 N번 삽입 O(N) space
+*/
