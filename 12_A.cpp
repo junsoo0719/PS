@@ -3,7 +3,6 @@
 #include <queue>
 using namespace std;
 
-int t;
 
 int main()
 {
@@ -11,41 +10,52 @@ int main()
 	cin.tie(nullptr);
 	cout.tie(nullptr);
 
+	int t;
 	cin >> t;
 	while (t--)
 	{
 		int n, k, m;
 		cin >> n >> k >> m;
-		vector<vector<int>> adj(k + 1);
-		for (int i = 0; i < m; i++)
+		vector<vector<int>> graph(k + 1); //그래프 인접 리스트
+		vector<int> indeg(k + 1); //각 노드 진입 차수
+		vector<int> require(k + 1); //각 과목 최소 학기 수
+		for (int i = 0; i < m; i++) //선수 조건 입력
 		{
 			int a, b;
 			cin >> a >> b;
-			adj[b].push_back(a);
+			graph[a].push_back(b); //a->b 간선
+			indeg[b]++; //b의 진입 차수
+		}
+
+		queue<int> sorting_q; //진입 차수 0인 노드 처리
+		for (int i = 1; i <= k; i++)
+		{
+			if (indeg[i] == 0)
+			{
+				sorting_q.push(i); //진입 차수 0인 노드 큐 삽입
+				require[i] = 1; //선수 과목 X
+			}
+		}
+		while (!sorting_q.empty()) //위상 정렬
+		{
+			int cur = sorting_q.front();
+			sorting_q.pop();
+			for (int next : graph[cur])
+			{ //다음 노드 최소 학기: 현재 노드 학기+1
+				require[next] = max(require[next], require[cur] + 1);
+				if (--indeg[next] == 0) //간선 제거, 진입 차수 감소
+					sorting_q.push(next); //진입 차수 0 되면 큐 삽입
+			}
 		}
 
 		int q;
 		cin >> q;
 		for (int i = 0; i < q; i++)
 		{
-			int course;
-			cin >> course;
+			int query;
+			cin >> query;
 
-			queue<int> q;
-			q.push(course);
-			int cnt = 1;
-			while (!q.empty())
-			{
-				int cur = q.front();
-				q.pop();
-				for (int pre : adj[cur])
-				{
-					q.push(pre);
-					cnt++;
-				}
-			}
-			
-			if (cnt <= n)
+			if (require[query] <= n)
 				cout << "True\n";
 			else
 				cout << "False\n";
@@ -103,7 +113,7 @@ CalculateRequiredSemester()
 		if indegree[i]==0
 			sorting_queue.push(i)
 			required_semester=1
-	while !sorting_queue.empty() 
+	while !sorting_queue.empty()
 		int now=sorting_queue.front()
 		sorting_queue.pop()
 		for next in graph[now]
