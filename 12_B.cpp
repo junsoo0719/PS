@@ -22,12 +22,16 @@ int main()
 	
 		for (int i = 1; i <= m; i++) //i명 (0명에게 j개 사탕 나눠준 경우는 성립 X, 위에서 0으로 초기화)
 		{
-			for (int j = 0; j <= n; j++) //j개 사탕
+			vector<int> prefix(n + 1); //prefix[j]: dp[i-1][0]~dp[i-1][j] 누적합
+			prefix[0] = dp[i - 1][0];
+			for (int j = 1; j <= n; j++)
+				prefix[j] = (prefix[j - 1] + dp[i - 1][j]) % MOD;
+
+			for (int j = 0; j <= n; j++)
 			{
-				for (int x = 0; x <= min(k, j); x++) //x: i번재 친구가 받은 사탕 수
-				{
-					dp[i][j] = (dp[i][j] + dp[i - 1][j - x]) % MOD;
-				}
+				dp[i][j] = prefix[j]; //기본적으로 dp[i][j]는 dp[i-1][0]~dp[i-1][j]의 합
+				if (j > k) //불필요한 값 제거 dp[i-1][0]~dp[i-1][j-k-1]의 합
+					dp[i][j] = (dp[i][j] - prefix[j - k - 1] + MOD) % MOD; //음수 방지
 			}
 		}
 
